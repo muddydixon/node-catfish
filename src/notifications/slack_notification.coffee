@@ -15,15 +15,9 @@ module.exports = class Watcher.SlackNotification extends Watcher.Notification
     @slack = new Slack(@config.domain, @config.token)
   notify: (name, err)->
     d = deferred()
-    console.log {
-      proxy:    @config.proxy or process.env.http_proxy
-      text:     "#{name}: #{err.message}"
-      channel:  @config.channel
-      username: @config.username
-    }, JSON.parse(JSON.stringify @config)
     @slack.send({
       proxy:    @config.proxy or process.env.http_proxy
-      text:     "#{name}: #{err.message}"
+      text:     "[#{@hostname}] #{name}: #{err.message}"
       channel:  @config.channel
       username: @config.username
     }, (err)->
