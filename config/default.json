@@ -1,0 +1,19 @@
+{
+    "interval": 5000,
+    "procs": [
+        {
+            "name":     "<process name>",
+            "type":     "<process type `ps`>",
+            "value":    "<check process string>"
+        }
+    ],
+    "notifications": [
+        {
+            "name":     "slack",
+            "token":    "<token>",
+            "domain":   "<domain>",
+            "channel":  "<channel>",
+            "username": "<username>"
+        }
+    ]
+}
