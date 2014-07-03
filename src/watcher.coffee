@@ -19,7 +19,7 @@ module.exports = class Watcher
   check: =>
     for name, proc of @procs
       do (name, proc)=>
-        console.log "check #{name}(#{proc.type})"
+        # console.log "check #{name}(#{proc.type})"
         proc.check()
         .catch((err)=>
           @notify(name, err)
@@ -28,7 +28,7 @@ module.exports = class Watcher
 
   notify: (name, err)->
     for notificationName, notification of @notifications
-      console.log "#{name}, #{notificationName}, #{err.message}"
+      # console.log "#{name}, #{notificationName}, #{err.message}"
       notification.notify(name, err)
 
   addProc: (proc)->
