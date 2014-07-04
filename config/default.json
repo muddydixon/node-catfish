@@ -1,6 +1,6 @@
 {
     "interval": 5000,
-    "procs": [
+    "specs": [
         {
             "name":     "<process name>",
             "type":     "<process type `ps`>",

@@ -3,15 +3,17 @@
 Slack           = require "node-slack"
 deferred        = require "deferred"
 
-Watcher         = require "../watcher"
-Watcher.Notification         = require "./notification"
+Catfish         = require "../catfish"
+Catfish.Notification         = require "./notification"
 
 #
-# Watcher.SlackNotification
+# Catfish.SlackNotification
 #
-module.exports = class Watcher.SlackNotification extends Watcher.Notification
+module.exports = class Catfish.SlackNotification extends Catfish.Notification
   constructor: (@config)->
     super(@config)
+    throw new Error("domain is required") unless @config.domain
+    throw new Error("token is required") unless @config.token
     @slack = new Slack(@config.domain, @config.token)
   notify: (name, err)->
     d = deferred()

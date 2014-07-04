@@ -1,30 +1,39 @@
 {
-  "name": "host-watch",
+  "name": "catfish",
   "version": "0.0.0",
-  "description": "process check agent",
-  "main": "index.js",
+  "description": "process / server metrics check agent",
+  "main": "bin/agent.js",
   "directories": {
-    "test": "test"
-  },
-  "bin": {
-     "host-watch-agent": "./bin/agent.coffee"
+    "test": "test",
+    "bin": "bin"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test",
+    "coverage": "mocha --compilers coffee:coffee-script -r blanket -R html-cov test/**/*_test.coffee"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "muddydixon<muddydixon@gmail.com>",
+  "license": "Apache License Version 2.0",
   "dependencies": {
     "config": "^0.4.36",
     "deferred": "^0.7.1",
-    "node-slack": "git://github.com/muddydixon/node-slack.git#enable_proxy_and_promise"
+    "node-slack": "0.0.4"
   },
   "devDependencies": {
+    "blanket": "^1.1.6",
+    "chai": "^1.9.1",
     "coffee-script": "^1.7.1",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-coffee": "^0.10.1",
     "grunt-simple-mocha": "^0.4.0",
-    "mocha": "^1.20.1"
+    "mocha": "^1.20.1",
+    "sinon": "^1.10.2"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "src",
+      "loader": "./node-loaders/coffee-script"
+    }
   }
 }

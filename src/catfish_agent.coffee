@@ -1,13 +1,15 @@
 "use strict"
 #
-# Watcher
+# Catfish Agent
 #
-module.exports = class Watcher
+Catfish = require "./catfish"
+
+module.exports = class Catfish.Agent extends Catfish
   @cnt: 0
   constructor: (config = {})->
-    @id         = Watcher.cnt++
+    @id         = Catfish.cnt++
     @interval   = config.interval or 5000
-    @procs      = {}
+    @specs      = {}
     @notifications = {}
 
   start: ->
@@ -17,25 +19,22 @@ module.exports = class Watcher
     clearInterval @timer
 
   check: =>
-    for name, proc of @procs
-      do (name, proc)=>
-        # console.log "check #{name}(#{proc.type})"
-        proc.check()
+    for name, spec of @specs
+      do (name, spec)=>
+        # console.log "check #{name}(#{spec.type})"
+        spec.check()
         .catch((err)=>
-          @notify(name, err)
+          @notify(spec, err)
           null
         )
 
-  notify: (name, err)->
+  notify: (spec, err)->
     for notificationName, notification of @notifications
       # console.log "#{name}, #{notificationName}, #{err.message}"
-      notification.notify(name, err)
+      notification.notify(spec.name, err)
 
-  addProc: (proc)->
-    @procs[proc.name] = proc
+  addSpec: (spec)->
+    @specs[spec.name] = spec
 
   addNotification: (notification)->
     @notifications[notification.name] = notification
-
-  @capitalize: (str)->    "#{str[0].toUpperCase()}#{str[1...].toLowerCase()}"
-  @bracket: (str)->       "[#{str[0]}]#{str[1...]}"

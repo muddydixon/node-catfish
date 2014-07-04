@@ -1,10 +1,10 @@
 "use strict"
 
-Watcher         = require "../watcher"
+Catfish         = require "../catfish"
 #
-# Watcher.Proc
+# Catfish.Spec
 #
-module.exports = class Watcher.Proc
+module.exports = class Catfish.Spec
   constructor: (@config)->
     throw new Error("name required") unless @config.name
     @name = @config.name
@@ -12,6 +12,6 @@ module.exports = class Watcher.Proc
   check: ->
   @create: (config)->
     try
-      new Watcher["#{Watcher.capitalize(config.type)}Proc"](config)
+      new Catfish["#{Catfish.capitalize(config.type)}Spec"](config)
     catch err
       throw err

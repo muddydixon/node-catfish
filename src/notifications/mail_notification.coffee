@@ -2,10 +2,10 @@
 
 deferred        = require "deferred"
 
-Watcher         = require "../watcher"
-Watcher.Notification         = require "./notification"
+Catfish         = require "../catfish"
+Catfish.Notification         = require "./notification"
 
 #
-# Watcher.MailNotification
+# Catfish.MailNotification
 #
-module.exports = class Watcher.MailNotification extends Watcher.Notification
+module.exports = class Catfish.MailNotification extends Catfish.Notification

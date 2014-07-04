@@ -1,30 +1,35 @@
 #!/usr/bin/env coffee
 "use strict"
 
-cluster         = require "cluster"
 {exec}          = require "child_process"
 config          = require "config"
 Fs              = require "fs"
 Path            = require "path"
+cluster         = require "cluster"
 
-Watcher         = require "../src/watcher"
+libDir = "src"
+Catfish         = require "../#{libDir}/catfish"
+require "../#{libDir}/catfish_agent"
+require "../#{libDir}/specs/spec"
+require "../#{libDir}/notifications/notification"
 
-procDir = Path.join __dirname, "..", "src/procs/"
+specDir = Path.join __dirname, "..", "src/specs/"
 notificationDir = Path.join __dirname, "..", "src/notifications/"
 
-for file in Fs.readdirSync(procDir).filter((f)-> f.match(/^[^\_]+_proc/))
-  [proc, ext] = file.split(".")
-  require Path.join procDir, proc
+for file in Fs.readdirSync(specDir).filter((f)-> f.match(/^[^\_]+_spec/))
+  [spec, ext] = file.split(".")
+  require Path.join specDir, spec
+
 for file in Fs.readdirSync(notificationDir).filter((f)-> f.match(/^[^\_]+_notification/))
-  [proc, ext] = file.split(".")
-  require Path.join notificationDir, proc
+  [notification, ext] = file.split(".")
+  require Path.join notificationDir, notification
 
 # ------------------------------------------------------------
 #
 # main
 #
 if cluster.isMaster
-  process.title   = "process-monitoring"
+  process.title   = "catfish"
 
   w = cluster.fork()
   cluster.on "exit", (worker)->
@@ -40,26 +45,27 @@ if cluster.isMaster
     process.exit -1
 
 else
-  process.title   = "process-monitoring-worker"
-  watcher = new Watcher(interval: config.interval)
+  process.title   = "catfish-worker"
+  agent = new Catfish.Agent(interval: config.interval)
 
-  for conf in config?.procs or []
+  for conf in config?.specs or []
     try
-      proc = Watcher.Proc.create(conf)
+      spec = Catfish.Spec.create(conf)
     catch err
+      console.log err.stack
       process.send err.message
-    watcher.addProc(proc)
-    console.log "add new watched proc #{conf.name} as #{conf.type}"
+    agent.addSpec(spec)
+    console.log "add new watched spec #{conf.name} as #{conf.type}"
 
   for conf in config?.notifications or []
     try
-      notification = Watcher.Notification.create(conf)
+      notification = Catfish.Notification.create(conf)
     catch err
       process.send err.message
-    watcher.addNotification(notification)
+    agent.addNotification(notification)
     console.log "add new notification #{conf.name} as #{conf.type}"
 
-  watcher.start()
+  agent.start()
 
 process.on "uncaughtException", (err)->
   console.log err.stack
