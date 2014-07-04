@@ -14,6 +14,9 @@ module.exports = (grunt)->
         src: [ "**/*.coffee" ]
         dest: "lib"
         ext: ".js"
+      bin:
+        files:
+          "bin/catfish": "bin/catfish.coffee"
     simplemocha:
       options:
         ui: "bdd"

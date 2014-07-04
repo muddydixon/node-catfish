@@ -50,7 +50,14 @@ Exec this: (WIP)
 ### Specs
 
 * process
+* threshold
+* bash
 
 ### Notifications
 
+* mail
 * slack
+* webhook
+* nagios
+* sensu
+* mackerel

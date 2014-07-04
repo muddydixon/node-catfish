@@ -4,7 +4,7 @@ Slack           = require "node-slack"
 deferred        = require "deferred"
 
 Catfish         = require "../catfish"
-Catfish.Notification         = require "./notification"
+Catfish.Notification         = require "../notifications"
 
 #
 # Catfish.SlackNotification

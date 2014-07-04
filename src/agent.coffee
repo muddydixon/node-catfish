@@ -9,6 +9,7 @@ module.exports = class Catfish.Agent extends Catfish
   constructor: (config = {})->
     @id         = Catfish.cnt++
     @interval   = config.interval or 5000
+    console.log @interval
     @specs      = {}
     @notifications = {}
 

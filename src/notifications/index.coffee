@@ -2,6 +2,7 @@
 
 deferred        = require "deferred"
 os              = require "os"
+
 Catfish         = require "../catfish"
 #
 # Catfish.Notification
@@ -15,11 +16,12 @@ module.exports = class Catfish.Notification
   notify: (name, err)->
     deferred(null)
   @create: (config)->
-    if typeof Catfish["#{Catfish.capitalize(config.type)}Notification"] is "function"
+    try
+      require "./#{config.type.toLowerCase()}_notification"
       new Catfish["#{Catfish.capitalize(config.type)}Notification"](config)
-    else
-      throw new Catfish.Notification.UnknownNotification("\"#{config.type}\" is unknown notification")
+    catch err
+      throw new Catfish.Notification.UnknownNotificationError("\"#{config.type}\" is unknown notification")
 
-class Catfish.Notification.UnknownNotification extends Error
+class Catfish.Notification.UnknownNotificationError extends Error
   constructor: (@message)->
     super(@message)

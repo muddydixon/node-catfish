@@ -4,7 +4,7 @@ deferred        = require "deferred"
 {exec}          = require "child_process"
 
 Catfish         = require "../catfish"
-Catfish.Spec    = require "./spec"
+Catfish.Spec    = require "../specs"
 
 #
 # Catfish.PsSpec

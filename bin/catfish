@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+;
+"use strict";
+var Catfish, Fs, agent, cluster, conf, config, err, exec, notification, spec, w, _, _i, _j, _len, _len1, _ref, _ref1;
+
+exec = require("child_process").exec;
+
+config = require("config");
+
+cluster = require("cluster");
+
+Fs = require("fs");
+
+_ = require("lodash");
+
+config = _.merge(config, Fs.existsSync("/etc/catfish.json") && require("/etc/catfish.json") || {});
+
+Catfish = require("../lib/catfish");
+
+if (cluster.isMaster) {
+  process.title = "catfish";
+  w = cluster.fork();
+  cluster.on("exit", function(worker) {
+    var err;
+    console.log("worker (" + worker.process.pid + ") exit");
+    if (typeof worker.stop === "function") {
+      worker.stop();
+    }
+    try {
+      return w = cluster.fork();
+    } catch (_error) {
+      err = _error;
+      console.log("create new worker failed");
+      return process.exit(-1);
+    }
+  });
+  w.on("message", function(err) {
+    console.log(err);
+    return process.exit(-1);
+  });
+} else {
+  process.title = "catfish-worker";
+  agent = new Catfish.Agent({
+    interval: config.interval
+  });
+  _ref = (config != null ? config.specs : void 0) || [];
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    conf = _ref[_i];
+    try {
+      spec = Catfish.Spec.create(conf);
+    } catch (_error) {
+      err = _error;
+      console.log(err.stack);
+      process.send(err.message);
+    }
+    agent.addSpec(spec);
+    console.log("add new watched spec " + conf.name + " as " + conf.type);
+  }
+  _ref1 = (config != null ? config.notifications : void 0) || [];
+  for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+    conf = _ref1[_j];
+    try {
+      notification = Catfish.Notification.create(conf);
+    } catch (_error) {
+      err = _error;
+      process.send(err.message);
+    }
+    agent.addNotification(notification);
+    console.log("add new notification " + conf.name + " as " + conf.type);
+  }
+  agent.start();
+}
+
+process.on("uncaughtException", function(err) {
+  return console.log(err.stack);
+});

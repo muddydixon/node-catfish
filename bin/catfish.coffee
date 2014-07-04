@@ -1,28 +1,20 @@
-#!/usr/bin/env coffee
+`#!/usr/bin/env node
+`
 "use strict"
 
 {exec}          = require "child_process"
 config          = require "config"
-Fs              = require "fs"
-Path            = require "path"
 cluster         = require "cluster"
+Fs              = require "fs"
+_               = require "lodash"
 
-libDir = "src"
-Catfish         = require "../#{libDir}/catfish"
-require "../#{libDir}/catfish_agent"
-require "../#{libDir}/specs/spec"
-require "../#{libDir}/notifications/notification"
+config          = _.merge(
+  config,
+  Fs.existsSync("/etc/catfish.json") and require("/etc/catfish.json") or {}
+)
+# TODO: Logger
 
-specDir = Path.join __dirname, "..", "src/specs/"
-notificationDir = Path.join __dirname, "..", "src/notifications/"
-
-for file in Fs.readdirSync(specDir).filter((f)-> f.match(/^[^\_]+_spec/))
-  [spec, ext] = file.split(".")
-  require Path.join specDir, spec
-
-for file in Fs.readdirSync(notificationDir).filter((f)-> f.match(/^[^\_]+_notification/))
-  [notification, ext] = file.split(".")
-  require Path.join notificationDir, notification
+Catfish         = require "../lib/catfish"
 
 # ------------------------------------------------------------
 #
@@ -43,7 +35,6 @@ if cluster.isMaster
   w.on "message", (err)->
     console.log err
     process.exit -1
-
 else
   process.title   = "catfish-worker"
   agent = new Catfish.Agent(interval: config.interval)
