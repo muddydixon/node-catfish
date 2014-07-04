@@ -1,4 +1,4 @@
-# Catfish: server process monitoring and notification tool
+# Catfish: server process monitoring and notification tool [![Build Status](https://travis-ci.org/muddydixon/node-catfish.svg?branch=master)](https://travis-ci.org/muddydixon/node-catfish)
 
 Catfish is server process monitoring and notification agent.
 
